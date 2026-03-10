@@ -1,136 +1,160 @@
+
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azecht</title>
-    <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        h1 {
-            text-align: center;
-            padding: 15px 0;
-            font-size: 1.8rem;
-            background: rgba(0, 0, 0, 0.3);
-            margin-bottom: 10px;
-        }
-        #chat {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-        }
-        .message {
-            margin: 10px 0;
-            padding: 12px 16px;
-            border-radius: 20px;
-            max-width: 80%;
-            word-wrap: break-word;
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-        .user {
-            background: #00d4ff;
-            color: #000;
-            margin-left: auto;
-        }
-        .bot {
-            background: rgba(255,255,255,0.15);
-            margin-right: auto;
-        }
-        .input-area {
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            display: flex;
-            gap: 8px;
-        }
-        #input {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 30px;
-            background: rgba(255,255,255,0.15);
-            color: white;
-            font-size: 1rem;
-        }
-        #input::placeholder { color: rgba(255,255,255,0.6); }
-        button {
-            padding: 12px 24px;
-            background: #00d4ff;
-            color: #000;
-            border: none;
-            border-radius: 30px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:active { background: #00b7e0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azecpt v1</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:95%;
+max-width:500px;
+background:#111827;
+border-radius:12px;
+padding:15px;
+color:white;
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+}
+
+#chat{
+height:400px;
+overflow-y:auto;
+background:#020617;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.msg{
+margin:6px 0;
+padding:8px;
+border-radius:6px;
+}
+
+.user{
+background:#2563eb;
+text-align:right;
+}
+
+.bot{
+background:#374151;
+}
+
+.input{
+display:flex;
+}
+
+input{
+flex:1;
+padding:10px;
+border:none;
+border-radius:6px;
+}
+
+button{
+padding:10px;
+margin-left:5px;
+border:none;
+background:#22c55e;
+color:white;
+border-radius:6px;
+}
+
+</style>
 </head>
+
 <body>
-    <h1>Azecht</h1>
-    <div id="chat"></div>
 
-    <div class="input-area">
-        <input id="input" placeholder="Mesaj yaz..." autocomplete="off">
-        <button onclick="gonder()">Göndər</button>
-    </div>
+<div class="container">
 
-    <script>
-        const apiKey = "BURAYA_GROQ_API_KEY_QOY"; // ← buraya öz Groq key-ni yapışdır!!!
-        const model = "llama-3.1-70b-versatile";
+<h1>Azecpt v1</h1>
 
-        async function gonder() {
-            const input = document.getElementById("input");
-            const mesaj = input.value.trim();
-            if (!mesaj) return;
+<div id="chat"></div>
 
-            elaveEt(mesaj, "user");
-            input.value = "";
+<div class="input">
+<input id="text" placeholder="Mesaj yaz..." />
+<button onclick="send()">Gönder</button>
+</div>
 
-            try {
-                const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${apiKey}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model,
-                        messages: [
-                            {
-                                role: "system",
-                                content: "Sən Azecht adlı AI botsan. Hər zaman YALNIZ AZƏRBAYCAN DİLİNDƏ cavab ver. Heç vaxt başqa dilə keçmə. Cavabların dostcasına, gülməli və köməkçi olsun. Salamlaşanda 'Salam qardaş! Nə xəbər? 😏' kimi başla."
-                            },
-                            { role: "user", content: mesaj }
-                        ],
-                        temperature: 0.85,
-                        max_tokens: 400
-                    })
-                });
+</div>
 
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                elaveEt(data.choices[0].message.content.trim(), "bot");
-            } catch {
-                elaveEt("Bağışla qardaş, xəta çıxdı 😅 Yenə cəhd et", "bot");
-            }
-        }
+<script>
 
-        function elaveEt(m, tip) {
-            const chat = document.getElementById("chat");
-            const div = document.createElement("div");
-            div.className = `message ${tip}`;
-            div.textContent = m;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
-    </script>
+let chat=document.getElementById("chat")
+
+function send(){
+
+let input=document.getElementById("text")
+let msg=input.value
+
+if(msg.trim()=="")return
+
+add(msg,"user")
+
+let reply=ai(msg)
+
+setTimeout(()=>{
+add(reply,"bot")
+},500)
+
+input.value=""
+
+}
+
+function add(text,type){
+
+let div=document.createElement("div")
+div.className="msg "+type
+div.innerText=text
+
+chat.appendChild(div)
+chat.scrollTop=chat.scrollHeight
+
+}
+
+function ai(msg){
+
+msg=msg.toLowerCase()
+
+if(msg.includes("salam"))
+return "Salam. Mən Azecpt v1 süni zəka modeliyəm."
+
+if(msg.includes("adın"))
+return "Mənim adım Azecpt v1-dir."
+
+if(msg.includes("kim yaratdı"))
+return "Məni İbrahim Həmzəyev yaratdı."
+
+if(msg.includes("necəsən"))
+return "Mən yaxşıyam."
+
+if(msg.includes("saat"))
+return new Date().toLocaleTimeString()
+
+if(msg.includes("tarix"))
+return new Date().toLocaleDateString()
+
+return "Bu sualı hələ başa düşmürəm."
+
+}
+
+</script>
+
 </body>
 </html>

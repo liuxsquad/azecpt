@@ -3,86 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azecht – Sənin AI Dostun</title>
+    <title>Azecht</title>
     <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: #fff;
-            margin: 0;
-            padding: 20px;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
         h1 {
-            margin: 20px 0;
-            font-size: 2.5em;
-            text-shadow: 0 0 10px #00d4ff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
         }
         #chat {
-            width: 100%;
-            max-width: 700px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px;
-            height: 60vh;
+            flex: 1;
             overflow-y: auto;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
         }
         .message {
-            margin: 12px 0;
-            padding: 12px 18px;
-            border-radius: 18px;
+            margin: 10px 0;
+            padding: 12px 16px;
+            border-radius: 20px;
             max-width: 80%;
             word-wrap: break-word;
+            font-size: 1rem;
+            line-height: 1.4;
         }
         .user {
             background: #00d4ff;
-            align-self: flex-end;
-            margin-left: auto;
             color: #000;
+            margin-left: auto;
         }
         .bot {
-            background: rgba(255, 255, 255, 0.2);
-            align-self: flex-start;
+            background: rgba(255,255,255,0.15);
+            margin-right: auto;
         }
         .input-area {
-            width: 100%;
-            max-width: 700px;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         #input {
             flex: 1;
-            padding: 14px;
+            padding: 12px 16px;
             border: none;
             border-radius: 30px;
-            font-size: 1.1em;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             color: white;
-            outline: none;
+            font-size: 1rem;
         }
-        #input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
+        #input::placeholder { color: rgba(255,255,255,0.6); }
         button {
-            padding: 14px 28px;
+            padding: 12px 24px;
             background: #00d4ff;
-            color: black;
+            color: #000;
             border: none;
             border-radius: 30px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
         }
-        button:hover {
-            background: #00b7e0;
-            transform: scale(1.05);
-        }
+        button:active { background: #00b7e0; }
     </style>
 </head>
 <body>
@@ -95,7 +83,7 @@
     </div>
 
     <script>
-        const apiKey = "BURAYA_GROQ_API_KEY_QOY"; // ← Groq-dan aldığın key-i bura yapışdır
+        const apiKey = "BURAYA_GROQ_API_KEY_QOY"; // ← buraya öz Groq key-ni yapışdır!!!
         const model = "llama-3.1-70b-versatile";
 
         async function gonder() {
@@ -107,14 +95,14 @@
             input.value = "";
 
             try {
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${apiKey}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        model: model,
+                        model,
                         messages: [
                             {
                                 role: "system",
@@ -123,24 +111,23 @@
                             { role: "user", content: mesaj }
                         ],
                         temperature: 0.85,
-                        max_tokens: 500
+                        max_tokens: 400
                     })
                 });
 
-                if (!response.ok) throw new Error("API xətası");
-                const data = await response.json();
-                const cavab = data.choices[0].message.content.trim();
-                elaveEt(cavab, "bot");
-            } catch (err) {
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                elaveEt(data.choices[0].message.content.trim(), "bot");
+            } catch {
                 elaveEt("Bağışla qardaş, xəta çıxdı 😅 Yenə cəhd et", "bot");
             }
         }
 
-        function elaveEt(mesaj, tip) {
+        function elaveEt(m, tip) {
             const chat = document.getElementById("chat");
             const div = document.createElement("div");
             div.className = `message ${tip}`;
-            div.textContent = mesaj;
+            div.textContent = m;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
         }

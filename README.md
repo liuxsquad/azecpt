@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azecpt v1</title>
+<title>Avropa Futbol Oyunları</title>
 
 <style>
 
@@ -12,68 +11,38 @@ body{
 margin:0;
 font-family:Arial;
 background:#0f172a;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.container{
-width:95%;
-max-width:500px;
-background:#111827;
-border-radius:12px;
-padding:15px;
 color:white;
+padding:20px;
 }
 
 h1{
 text-align:center;
-margin-bottom:10px;
 }
 
-#chat{
-height:400px;
-overflow-y:auto;
-background:#020617;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-}
-
-.msg{
-margin:6px 0;
-padding:8px;
-border-radius:6px;
-}
-
-.user{
-background:#2563eb;
-text-align:right;
-}
-
-.bot{
-background:#374151;
-}
-
-.input{
+.match{
+background:#111827;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
 display:flex;
+align-items:center;
+justify-content:space-between;
 }
 
-input{
-flex:1;
-padding:10px;
-border:none;
-border-radius:6px;
+.team{
+display:flex;
+align-items:center;
+gap:10px;
 }
 
-button{
-padding:10px;
-margin-left:5px;
-border:none;
-background:#22c55e;
-color:white;
-border-radius:6px;
+.team img{
+width:40px;
+height:40px;
+}
+
+.time{
+font-size:18px;
+font-weight:bold;
 }
 
 </style>
@@ -81,78 +50,86 @@ border-radius:6px;
 
 <body>
 
-<div class="container">
+<h1>Avropa Oyunları</h1>
 
-<h1>Azecpt v1</h1>
-
-<div id="chat"></div>
-
-<div class="input">
-<input id="text" placeholder="Mesaj yaz..." />
-<button onclick="send()">Gönder</button>
-</div>
-
-</div>
+<div id="matches"></div>
 
 <script>
 
-let chat=document.getElementById("chat")
+let matches=[
 
-function send(){
+{
+team1:"Real Madrid",
+logo1:"https://crests.football-data.org/86.png",
+team2:"Bayern Munich",
+logo2:"https://crests.football-data.org/5.png",
+time:"2026-03-12 21:00"
+},
 
-let input=document.getElementById("text")
-let msg=input.value
+{
+team1:"Manchester City",
+logo1:"https://crests.football-data.org/65.png",
+team2:"PSG",
+logo2:"https://crests.football-data.org/524.png",
+time:"2026-03-12 23:00"
+},
 
-if(msg.trim()=="")return
-
-add(msg,"user")
-
-let reply=ai(msg)
-
-setTimeout(()=>{
-add(reply,"bot")
-},500)
-
-input.value=""
-
+{
+team1:"Barcelona",
+logo1:"https://crests.football-data.org/81.png",
+team2:"Juventus",
+logo2:"https://crests.football-data.org/109.png",
+time:"2026-03-13 22:00"
 }
 
-function add(text,type){
+]
+
+function loadMatches(){
+
+let container=document.getElementById("matches")
+container.innerHTML=""
+
+let now=new Date()
+
+matches.forEach(m=>{
+
+let gameTime=new Date(m.time)
+
+if(gameTime>now){
 
 let div=document.createElement("div")
-div.className="msg "+type
-div.innerText=text
+div.className="match"
 
-chat.appendChild(div)
-chat.scrollTop=chat.scrollHeight
+div.innerHTML=`
+
+<div class="team">
+<img src="${m.logo1}">
+${m.team1}
+</div>
+
+<div class="time">
+VS<br>
+${gameTime.toLocaleString()}
+</div>
+
+<div class="team">
+${m.team2}
+<img src="${m.logo2}">
+</div>
+
+`
+
+container.appendChild(div)
+
+}
+
+})
 
 }
 
-function ai(msg){
+loadMatches()
 
-msg=msg.toLowerCase()
-
-if(msg.includes("salam"))
-return "Salam. Mən Azecpt v1 süni zəka modeliyəm."
-
-if(msg.includes("adın"))
-return "Mənim adım Azecpt v1-dir."
-
-if(msg.includes("kim yaratdı"))
-return "Məni İbrahim Həmzəyev yaratdı."
-
-if(msg.includes("necəsən"))
-return "Mən yaxşıyam."
-
-if(msg.includes("saat"))
-return new Date().toLocaleTimeString()
-
-if(msg.includes("tarix"))
-return new Date().toLocaleDateString()
-
-return "Bu sualı hələ başa düşmürəm."
-
-}
+setInterval(loadMatches,60000)
 
 </script>
 
